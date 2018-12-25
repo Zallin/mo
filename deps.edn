@@ -1,0 +1,18 @@
+{:paths ["tools" "src"]
+
+ :deps {org.clojure/clojure {:mvn/version "1.10.0-alpha4"}}
+
+ :aliases
+ {:dev
+  {:extra-paths ["test"]
+   :extra-deps
+   {com.cognitect/test-runner
+    {:git/url "https://github.com/cognitect-labs/test-runner.git"
+     :sha "3cb0a9daf1cb746259dc8309b218f9211ad3b33b"}
+    matcho
+    {:git/url "https://github.com/HealthSamurai/matcho.git"
+     :sha "5e44139038b53b6d05a186d8cd05819a96b0aab5"}
+    org.clojure/tools.cli {:mvn/version "0.4.1"}
+    org.clojure/tools.nrepl       {:mvn/version "0.2.13"}
+    refactor-nrepl/refactor-nrepl {:mvn/version "2.4.0"}
+    cider/cider-nrepl     {:mvn/version "0.18.0"}}}}}
