@@ -1,8 +1,7 @@
 .PHONY: test
 
 repl:
-	clj -A:dev -m "nrepl"
+	clj -A:dev -m "tools.repl" -p 3001
 
 test:
-	clj -A:dev -m "cognitect.test-runner" -d "test"
-
+	clj -A:dev -m "tools.test"
