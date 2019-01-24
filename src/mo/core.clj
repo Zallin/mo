@@ -36,22 +36,34 @@
       (vec (into (mapv deep-merge a b) (drop n c))))
     :else b))
 
-(defn a [pattern ctx*]
-  (let [post? (:post-merge (meta ctx*))
-        fns (match pattern)]
-    (if (empty? fns)
-      ctx*
-      (loop [[{id ::id f ::fn :as m} & oth] fns
-             stack []
-             ctx (if post? {} ctx*)]
-        (if (nil? m)
-          (cond-> (assoc ctx ::result (select-keys ctx stack))
-            post? (deep-merge ctx*))
-          (let [r (f ctx)]
-            (cond
-              (= ::nil r) (recur oth stack (dissoc ctx id))
-              (nil? r) (recur oth (conj stack id) ctx)
-              :else (recur oth (conj stack id) (deep-merge ctx {id r})))))))))
+(defn iter-apply [fns ctx*]
+  (let [post? (:post-merge (meta ctx*))]
+    (loop [[{id ::id f ::fn :as m} & oth] fns
+           stack []
+           ctx (if post? {} ctx*)]
+      (if (nil? m)
+        (cond-> (assoc ctx ::result (select-keys ctx stack))
+          post? (deep-merge ctx*))
+        (let [r (f ctx)]
+          (cond
+            (= ::nil r) (recur oth stack (dissoc ctx id))
+            (nil? r) (recur oth (conj stack id) ctx)
+            :else (recur oth (conj stack id) (deep-merge ctx {id r}))))))))
+
+(defn dispatch-fn [_ arg]
+  (cond
+    (or (vector? arg) (seq? arg)) :collection
+    :else :pattern))
+
+(defmulti a #'dispatch-fn)
+
+(defmethod a :pattern
+  [pattern ctx*]
+  (let [fns (match pattern)]
+    (if (empty? fns) ctx* (iter-apply fns ctx*))))
+
+(defmethod a :collection
+  [ctx* fns] (iter-apply fns ctx*))
 
 (comment
   (r!)
