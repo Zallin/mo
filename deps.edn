@@ -1,6 +1,9 @@
 {:paths ["tools" "src"]
 
- :deps {org.clojure/clojure {:mvn/version "1.10.0-alpha4"}}
+ :deps {org.clojure/clojure {:mvn/version "1.10.0-alpha4"}
+        matcho
+        {:git/url "https://github.com/HealthSamurai/matcho.git"
+         :sha "5e44139038b53b6d05a186d8cd05819a96b0aab5"}}
 
  :aliases
  {:dev
@@ -9,9 +12,4 @@
    :extra-deps
    {:tools
     {:git/url "https://github.com/Zallin/tools"
-     :sha "7a4a2ea932f047ff5f5682ea5c3699d127c8f27e"}
-
-    matcho
-    {:git/url "https://github.com/HealthSamurai/matcho.git"
-     :sha "5e44139038b53b6d05a186d8cd05819a96b0aab5"}}}}}
-
+     :sha "7a4a2ea932f047ff5f5682ea5c3699d127c8f27e"}}}}}

@@ -137,14 +137,25 @@
    {:square 25
     :print 'done}))
 
-(deftest test-deep-merge
+(deftest test-spec
+  ;; you can put constraints on mo/fns
+  ;; in order to catch errors early
 
-  (is (= (mo/deep-merge [] [1]) [1]))
+  (mo/reg-fn
+   {::mo/id :append-a
+    ;; it is done in form of matcho/match
+    ::mo/spec {:input {:value not-empty}}
+    ::mo/fn
+    (fn [{{v :value} :input}]
+      {:result (str v "a")})})
 
-  (is (= (mo/deep-merge [1] []) [1]))
+  (try
+    (let [ctx (mo/a {::mo/id :append-a} {:input {:wrong :value}})]
+      ;; result is wrong in this case
+      (is false))
+    (catch Exception e
+      (is e)))
 
-  (is (= (mo/deep-merge [1 2] [3 4]) [3 4]))
-
-  (is (= (mo/deep-merge [1 2] [3 4 5]) [3 4 5]))
-
-  (is (= (mo/deep-merge [1 2 3] [4 5]) [4 5 3])))
+  (matcho/assert
+   {:append-a {:result "ba"}}
+   (mo/a {::mo/id :append-a} {:input {:value "b"}})))

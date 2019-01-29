@@ -1,5 +1,7 @@
 (ns mo.core
   (:require
+   [clojure.pprint :as ppr]
+   [matcho.core :as matcho]
    [clojure.spec.alpha :as s]
    [clojure.spec.test.alpha :as stest]))
 
@@ -38,16 +40,20 @@
 
 (defn iter-apply [fns ctx*]
   (let [post? (:post-merge (meta ctx*))]
-    (loop [[{id ::id f ::fn :as m} & oth] fns
+    (loop [[{id ::id spec ::spec f ::fn :as m} & oth] fns
            stack []
            ctx (if post? {} ctx*)]
       (if (nil? m)
         (cond-> (assoc ctx ::result (select-keys ctx stack))
           post? (deep-merge ctx*))
-        (let [r (f ctx)]
-          (cond
-            (nil? r) (recur oth stack (dissoc ctx id))
-            :else (recur oth (conj stack id) (deep-merge ctx {id r}))))))))
+        (do
+          (when (and spec (not (matcho/valid? spec ctx)))
+            (ppr/pprint ctx)
+            (throw (Exception. (str "Call to " (::id f) " does not conform to spec. See stdout"))))
+          (let [r (f ctx)]
+            (cond
+              (nil? r) (recur oth stack (dissoc ctx id))
+              :else (recur oth (conj stack id) (deep-merge ctx {id r})))))))))
 
 (defn dispatch-fn [_ arg]
   (cond
@@ -68,5 +74,3 @@
   (r!)
 
   )
-
-
