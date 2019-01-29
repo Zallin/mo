@@ -49,7 +49,7 @@
         (do
           (when (and spec (not (matcho/valid? spec ctx)))
             (ppr/pprint ctx)
-            (throw (Exception. (str "Call to " (::id f) " does not conform to spec. See stdout"))))
+            (throw (Exception. (str "Call to " id " does not conform to spec. See stdout"))))
           (let [r (f ctx)]
             (cond
               (nil? r) (recur oth stack (dissoc ctx id))
