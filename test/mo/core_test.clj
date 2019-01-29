@@ -71,17 +71,18 @@
            :family "Smiths"
            :roles ["just" "a" "user"]}})))
 
-(deftest mo-nil
-  ;; if you apply same function multiple times
-  ;; you may want to set result of previous application
-  ;; to nil under some conditions
+(deftest how-nil-works
+  ;; mo/fns are intended to be stateless
+  ;; (unaware of the previous invokation)
+
+  ;; so when nil is returned from mo/fn
+  ;; corresponding key in a ctx gets deleted
 
   (mo/reg-fn
    {::mo/id :user
     ::mo/fn
-    ;; this is achieved by using |
-    ;;                           V
-    (fn [{u :user}] (if u ::mo/nil {:name "Tim"}))})
+    ;; return user if it is not present
+    (fn [{u :user}] (when-not u {:name "Tim"}))})
 
   (def ctx (mo/a {::mo/id :user} {}))
 
@@ -89,7 +90,8 @@
   (matcho/assert {:user {:name "Tim"}} ctx)
 
   ;;the second one
-  (matcho/assert {:user nil?} (mo/a {::mo/id :user} ctx)))
+  (matcho/assert {:user nil?} (mo/a {::mo/id :user} ctx))
+  (is (not (contains? (mo/a {::mo/id :user} ctx) :user))))
 
 (deftest pure-match
   ;; you can also match functions

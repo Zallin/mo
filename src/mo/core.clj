@@ -46,8 +46,7 @@
           post? (deep-merge ctx*))
         (let [r (f ctx)]
           (cond
-            (= ::nil r) (recur oth stack (dissoc ctx id))
-            (nil? r) (recur oth (conj stack id) ctx)
+            (nil? r) (recur oth stack (dissoc ctx id))
             :else (recur oth (conj stack id) (deep-merge ctx {id r}))))))))
 
 (defn dispatch-fn [_ arg]
