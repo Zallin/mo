@@ -1,9 +1,7 @@
 {:paths ["tools" "src"]
 
- :deps {org.clojure/clojure {:mvn/version "1.10.0-alpha4"}
-        matcho
-        {:git/url "https://github.com/HealthSamurai/matcho.git"
-         :sha "5e44139038b53b6d05a186d8cd05819a96b0aab5"}}
+ :deps {org.clojure/clojure  {:mvn/version "1.10.0-alpha4"}
+        healthsamurai/matcho {:mvn/version "0.3.7"}}
 
  :aliases
  {:dev
